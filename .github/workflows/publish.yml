@@ -1,0 +1,48 @@
+name: Deploy
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Setup repo
+        id: setup
+        run: |
+          mkdir -p deploy
+          mkdir -p _just_data
+          echo "module.exports = {type: "postprocessor", redirect_config: {url: "https://justdeveloper.is-a.dev/", title: "redirect test"}}" > just.config.js
+        shell: bash
+      - name: Generate with _just
+        uses: JustDeveloper1/_just@v0.0.26-pre1
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: deploy
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
