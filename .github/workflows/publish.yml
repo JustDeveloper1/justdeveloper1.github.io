@@ -30,7 +30,7 @@ jobs:
           echo "module.exports = {type: \"redirect\", redirect_config: {url: \"https://justdeveloper.is-a.dev/\", title: \"redirect test\"}}" > just.config.js
         shell: bash
       - name: Generate with _just
-        uses: JustDeveloper1/_just@v0.0.26-pre1
+        uses: JustDeveloper1/_just@v0.0.26-pre2
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
